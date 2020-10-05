@@ -1,9 +1,6 @@
-## Welcome to GitHub Pages
+## Hey there
 
-You can use the [editor on GitHub](https://github.com/tanerochris/ping-react/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
+Hey there you have gone through the [react](url) documentation and some resources here and there and you are ready to put this knowledge to use, you are not on yet "another tutorial" on react. Ping react is a practical tutorial that gets your hands dirty with building a full react application. In this tutorial I am going to show you how I built [spyo.com](url), a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using [NextJs](url) -  A framework for building react application, MongoDB a NoSQL database on documents and Bulma react UI library kit. By the end of this tutorial you should have build your own Spyo, and leaned the underlaying react concepts. 
 ### Markdown
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
