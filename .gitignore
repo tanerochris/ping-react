@@ -1,2 +1,3 @@
 yarn.lock
 Gemfile.lock
+/node_modules

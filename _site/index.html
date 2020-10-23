@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>ping-react</title>
+<title>Integrate Payment with Flutterwave with React. | ping-react</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="ping-react" />
+<meta property="og:title" content="Integrate Payment with Flutterwave with React." />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/" />
 <meta property="og:url" content="http://localhost:4000/" />
 <meta property="og:site_name" content="ping-react" />
 <script type="application/ld+json">
-{"headline":"ping-react","url":"http://localhost:4000/","@type":"WebSite","name":"ping-react","@context":"https://schema.org"}</script>
+{"headline":"Integrate Payment with Flutterwave with React.","url":"http://localhost:4000/","@type":"WebSite","name":"ping-react","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
-    <link rel="stylesheet" href="/assets/css/style.css?v=f3d354d86087ceaacbf606d27a6cd28b6a1c8d8f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=6e551c84081b3a2e5f89a8b3fa1e77d85c1ac1ee">
   </head>
   <body>
     <section class="page-header">
@@ -30,10 +30,22 @@
     </section>
 
     <section class="main-content">
-      <p>n## Integrate Payment with Flutterwave with React.
-Hey there you have gone through the <a href="url">react</a> documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I built <a href="url">spyo.com</a>, a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using <a href="url">NextJs</a> -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses <a href="https://www.flutterwave.com/">Flutterwave</a> - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
+      <h2 id="integrate-payment-with-flutterwave-with-react">Integrate Payment with Flutterwave with React.</h2>
+<p>Hey there you have gone through the <a href="url">react</a> documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I built <a href="url">spyo.com</a>, a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using <a href="url">NextJs</a> -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses <a href="https://www.flutterwave.com/">Flutterwave</a> - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
+
+<h3 id="react-concepts">React concepts</h3>
+<p>In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.</p>
+<ul>
+  <li>React funtional components</li>
+  <li>Props</li>
+  <li>Hooks</li>
+  <li>Ref</li>
+  <li>Suspense</li>
+  <li>Lazy loading</li>
+</ul>
 
 <h2 id="lets-get-started">Lets get started</h2>
+<h3 id="installing-required-applications-to-run-application">Installing required applications to run application</h3>
 <p>The first step to this tutorial will be installing all relevant dependencies. Make sure you have the following installed <a href="https://nodejs.org/en/download/">Node Js</a> for running the base application we shall be building on, <a href="https://docs.mongodb.com/manual/installation/">Mongo</a> for application database, <a href="https://git-scm.com/downloads">git</a> to clone the base app repository. After installing all dependencies required to run the app, the next step is to clone the application.</p>
 
 <h3 id="cloning-base-app-repo">Cloning base app repo</h3>
@@ -43,18 +55,21 @@ Hey there you have gone through the <a href="url">react</a> documentation and so
 <p>Install dependencies with yarn</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yarn install
 </code></pre></div></div>
-
 <h3 id="running-the-app">Running the app</h3>
 <p>When you are done cloning, the name of application folder will be spo-tuto-base. Change to the spo-tuto-base directory and run yarn to start the application. We will start by running the application in developer mode.</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    cd spo-tuto-base
     yarn dev
 </code></pre></div></div>
-<p>In your browser go to the url <strong>http://localhost:3000</strong>, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this writeup we have setup the application with some design and functionality already. To run the application in production mode, you first build the app for optimizations by NextJS framework then run app.</p>
+<p>In your browser go to the url <strong>http://localhost:3000</strong>, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this writeup we have setup the application with some design and functionality already.</p>
+
+<p><img src="http://localhost:4000/images/index.PNG" style="display: block; margin: auto;" /></p>
+
+<p>To run the application in production mode, you first build the app for optimizations by NextJS framework then run app.</p>
 
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    yarn build
     yarn start
-
 </code></pre></div></div>
+
 <p>NextJS comes with react installed. To check for the version of react installed, open a new terminal session</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    yarn list --pattern --depth=0 "^react<span class="err">*</span>"
 </code></pre></div></div>
@@ -70,10 +85,23 @@ Hey there you have gone through the <a href="url">react</a> documentation and so
     Done in 1.67s.
 </code></pre></div></div>
 
-<h2 id="lets-start-building">Let’s start building</h2>
-<p>We are going to look at the struture of the app, where each item will fit in, some screen shots at the output we wish to obtain.</p>
 <h3 id="structure-of-the-application">Structure of the application</h3>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|-- README.md
+<p>We are going to look at the struture of the app, where each item will fit in, some screen shots at the output we wish to obtain.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+|-- LICENSE // hello
+|-- README.md
+|-- app.properties
+|-- components
+|   |-- partials
+|   `-- theme
+|-- helpers
+|-- middlewares
+|   |-- Database.js
+|   |-- Session.js
+|   `-- index.js
+|-- models
+|   `-- user
 |-- node_modules
 |-- package.json
 |-- pages
@@ -81,32 +109,22 @@ Hey there you have gone through the <a href="url">react</a> documentation and so
 |   |-- api
 |   `-- index.js
 |-- public
-|   |-- favicon.ico
-|   `-- vercel.svg
-|-- styles
-|   |-- Home.module.css
-|   `-- globals.css
-`-- yarn.lock
-</code></pre></div></div>
-<p>NextJs is opinionated and comes with the following directories. The pages directory will hold the different web pages of our application, and api endpoints which will go under the pages/api directory. NextJs uses a file name pattern for url routing where each page or api is associated to a route based on its file path from the pages folder. The public directory hosts static assets such as images, fonts just to name a few. To this directory structure we are going to add three more folders, a folder component folder to hold ui or page components such as partials and theme, a models folder to hold data models for the MongoDB, equally helper folder to hold utility functions, a middlewares folder to hold api routes middleware functions, and finally an app.properties file to hold links to external resources or services that will be used by our application. Below is the new structure of the application. You should create the folders accordingly.</p>
-
-<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|-- README.md
-|-- app.properties
-|-- components
-|-- helpers
-|-- middlewares
-|-- models
-|-- node_modules
-|-- package.json
-|-- pages
-|-- public
 |-- schemas
-|-- styles
 </code></pre></div></div>
-<p>We are good to go now, but before then if you have been following the tutorial from the beginning you can clone or pull the base application from github repo <a href="">spo-tuto</a>, since the main purpose of this tutorial is to demonstrate how I used React to build <a href="">Spyo</a>, there are details about getting the application configured for routing and database connection that cannot however be covered in this tutorial. In the next sections we shall be buiding the following pages for application, the index, login, register, and campaign pages for the application.</p>
+<p>NextJs is an opinionated  framework, it requires the pages and public folders to be present in the directory structure and located at the root level. We will add other directories to hold specific items of our application. Below is a summary detail of what each directory should contain. Note this is not specific to react or NextJS so you can define your own structure.</p>
 
-<h3 id="building-the-index-page">Building the index page</h3>
-<p>Below is a result we wish to achieve. When creating the index page we are going to create re-usable components we will use accross the app. The concept of componenents supported by react prevents code duplication, thus facilates maintainance and theming. Essentially a component is an independent item of our application which will contain</p>
+<ul>
+  <li>The <em>pages</em> directory will hold the different web pages of our application, and api endpoints which will go under the pages/api directory. NextJs uses a file name pattern for url routing where each page or api is associated to a route based on its file path from the pages folder.</li>
+  <li>The <em>public</em> directory hosts static assets such as images, fonts just to name a few. The component folder holds application ui or page components such as partials and theme.</li>
+  <li>The <em>models</em> folder to hold MongoDB data models the application data.</li>
+  <li>A <em>helper</em> folder to hold utility functions.</li>
+  <li>A <em>middlewares</em> folder to hold api routes middleware functions.</li>
+  <li>An <em>app.properties</em> file to hold variables that will be used across the app.</li>
+</ul>
+
+<h2 id="lets-start-building-with-react">Let’s start building with react</h2>
+<h3 id="building-the-login-and-signup-page">Building the login and Signup page</h3>
+<p>In react application is broken down into components were each component can be seen as an independent re-usable piece of code.</p>
 
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Syntax highlighted code block
 
