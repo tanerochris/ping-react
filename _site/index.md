@@ -31,7 +31,7 @@ When you are done cloning, the name of application folder will be spo-tuto-base.
 ```
 In your browser go to the url **http://localhost:3000**, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this writeup we have setup the application with some design and functionality already.
 
-<img src="{{site.url}}/images/index.PNG" style="display: block; margin: auto;" />
+<img src="./images/index.PNG" style="display: block; margin: auto;" />
 
 To run the application in production mode, you first build the app for optimizations by NextJS framework then run app.
 
@@ -238,13 +238,13 @@ When you must have downloaded ngrok, save the executable in your project folder 
 ```
 Ngrok will create a proxy to your local server. For the free account the generated link is valid for 7 hours 49 minutes.
 
-<img src="{{site.url}}/images/ngrok.PNG" style="display: block; margin: auto;" />
+<img src="./images/ngrok.PNG" style="display: block; margin: auto;" />
 
 
 #### Step 5
 Copy the https link, go to the dashboard of the Facebook app you created earlier, follow _Settings > Basic_ scroll down to _Website_ and update the site URL field. Note if you don't do this Facebook will not recognize the domain accessing its auth service and your login will fail and Login with facebook will not work.
 
-<img src="{{site.url}}/images/facebook.PNG" style="display: block; margin: auto;" />
+<img src="./images/facebook.PNG" style="display: block; margin: auto;" />
 
 
 #### Step 6
@@ -252,7 +252,7 @@ Now we go to the browser link to the secured link generared by ngrok. Try to Reg
 
 The login page has been implemented, open _pages/login.js_ you will notice there is no significant difference with the signup page. Separating both files was to allow for subsequent updates on other means of authentication and equally separating the login process from the signup process. After login with Facebook you should see the index page.
 
-<img src="{{site.url}}/images/logged_in.PNG" style="display: block; margin: auto;" />
+<img src="./images/logged_in.PNG" style="display: block; margin: auto;" />
 
 ### Intergrating Flutterwave
 We are now going to integrate Card payments with Flutterwave in our application. Some react concepts we will come across are react hooks, how to manipulate the Virtual DOM, suspense and lazy loading.
@@ -367,7 +367,7 @@ export default Transactions;
 ```
 In the above code we used useState hook to create and intialize state variables _transactions_,_runningBalance_, _totalBalance_ and _errorMessage_. Next will be creating the PaymentModal and PaymentWidget components. Notice we already have an _openPaymentModal_ onClick handler to registered on the _Top Up_ button to make payments to the platform.
 
-<img src="{{site.url}}/images/transaction_bare.PNG" style="display: block; margin: auto;" />
+<img src="./images/transaction_bare.PNG" style="display: block; margin: auto;" />
 
 The PaymentCardWidget component has been included in the spo-tuto-base repo, it is found in the _component/partial/widgets/PaymentCardWidget.js_ file.
 
