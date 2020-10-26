@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Integrate Payment with Flutterwave with React. | ping-react</title>
+<title>Integrate Payment with Flutterwave and Facebook Authentication into a React Application. | ping-react</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Integrate Payment with Flutterwave with React." />
+<meta property="og:title" content="Integrate Payment with Flutterwave and Facebook Authentication into a React Application." />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/" />
 <meta property="og:url" content="http://localhost:4000/" />
 <meta property="og:site_name" content="ping-react" />
 <script type="application/ld+json">
-{"headline":"Integrate Payment with Flutterwave with React.","url":"http://localhost:4000/","@type":"WebSite","name":"ping-react","@context":"https://schema.org"}</script>
+{"headline":"Integrate Payment with Flutterwave and Facebook Authentication into a React Application.","url":"http://localhost:4000/","@type":"WebSite","name":"ping-react","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
-    <link rel="stylesheet" href="/assets/css/style.css?v=6e551c84081b3a2e5f89a8b3fa1e77d85c1ac1ee">
+    <link rel="stylesheet" href="/assets/css/style.css?v=f39d135ba3fc0215dd4c31245f24fb05181266ae">
   </head>
   <body>
     <section class="page-header">
@@ -30,7 +30,7 @@
     </section>
 
     <section class="main-content">
-      <h2 id="integrate-payment-with-flutterwave-with-react">Integrate Payment with Flutterwave with React.</h2>
+      <h2 id="integrate-payment-with-flutterwave-and-facebook-authentication-into-a-react-application">Integrate Payment with Flutterwave and Facebook Authentication into a React Application.</h2>
 <p>Hey there you have gone through the <a href="url">react</a> documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I built <a href="url">spyo.com</a>, a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using <a href="url">NextJs</a> -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses <a href="https://www.flutterwave.com/">Flutterwave</a> - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
 
 <h3 id="react-concepts">React concepts</h3>
@@ -123,29 +123,336 @@
 </ul>
 
 <h2 id="lets-start-building-with-react">Let’s start building with react</h2>
-<h3 id="building-the-login-and-signup-page">Building the login and Signup page</h3>
-<p>In react application is broken down into components were each component can be seen as an independent re-usable piece of code.</p>
+<h3 id="building-the-signup---authenticating-with-facebook-login">Building the Signup - Authenticating with Facebook Login</h3>
+<p>In react application is broken down into components were each component can be seen as an independent re-usable piece of code. In react there are two types of components functional components and class components. In this tutorial we shall using functional components as they allow us to use the concepts of hooks. Functional components are stateless components while class components are stateful as the come with a built-in component state object. Functional components make use of the useState hook to implement state to a component.</p>
 
-<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Syntax highlighted code block
+<h4 id="class-component">Class component</h4>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    import React from 'react';<span class="sb">
 
-<span class="gh"># Header 1</span>
-<span class="gu">## Header 2 </span>
-<span class="gu">### Header 3</span>
-<span class="p">
--</span> Bulleted
-<span class="p">-</span> List
-<span class="p">
-1.</span> Numbered
-<span class="p">2.</span> List
-
-<span class="gs">**Bold**</span> and _Italic_ and <span class="sb">`Code`</span> text
-
-<span class="p">[</span><span class="nv">Link</span><span class="p">](</span><span class="sx">url</span><span class="p">)</span> and !<span class="p">[</span><span class="nv">Image</span><span class="p">](</span><span class="sx">src</span><span class="p">)</span>
+    class Signup extends React.Component {
+        state = {}
+        render() {
+            return &lt;&gt;
+                A React Class Component.
+            &lt;/&gt;
+        }
+    }
+    export default Login;
+</span></code></pre></div></div>
+<h4 id="functional-component">Functional Component</h4>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    import React from 'react';
+    
+    const Login = (props) =&gt; {
+        return <span class="nt">&lt;&gt;</span> 
+            A react functional component.
+        <span class="nt">&lt;/&gt;</span>
+    }
+    export default Login;
 </code></pre></div></div>
 
-<p>For more details see <a href="https://guides.github.com/features/mastering-markdown/">GitHub Flavored Markdown</a>.</p>
+<h4 id="props-vs-state">props vs state</h4>
+<p>In react the props object is used to pass information from a parent component to a child component. Attributes of a component become keys in the props object and the passed values are accessed through these attribute keys. In a react class component the prop object is imutable unlike the case of functional components. React class components manage component state by using the state property and setState method to update the state.</p>
 
-<h3 id="jekyll-themes">Jekyll Themes</h3>
+<p>Now we are going to create our SignUp component that will represent the Signup page and authenticate with Facebook Login.</p>
+
+<h4 id="step-1">Step 1</h4>
+<p>In the <em>pages</em> folder create the file <em>signup.js</em> and type in the following code.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import axios from 'axios';
+import FacebookLogin from 'react-facebook-login';
+import { useRouter } from 'next/router';
+import { getSession } from '../helpers/session-helpers';
+import AppHeader from '../components/partials/appHeader';
+
+const Signup = (props) =&gt; {
+    const [errorMessage, setErrorMessage] = useState('');
+    const router = useRouter();
+    const onSignUpResponse = (response) =&gt; {};  
+    return (
+        <span class="nt">&lt;&gt;</span>
+            <span class="nt">&lt;AppHeader</span> <span class="na">session=</span><span class="s">{props.session}/</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;main&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"alert-error"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;span&gt;</span>{errorMessage}<span class="nt">&lt;/span&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"auth-container bg-secondary"</span> <span class="nt">&gt;</span>
+                    <span class="nt">&lt;div&gt;</span>
+                        &lt;FacebookLogin  
+                            appId="635054340432342"
+                            autoLoad={false}
+                            textButton=" Register with Facebook" 
+                            fields="name,email,picture"
+                            callback={onSignUpResponse}
+                            cssClass="social-button fb-button"
+                            icon="fab fa-facebook-square" /&gt;
+                    <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;/main&gt;</span>
+        <span class="nt">&lt;/&gt;</span>
+    );
+  }
+
+function isBrowser() {
+    return typeof window !== 'undefined';
+}
+
+export async function getServerSideProps( { req, res }) {
+    const sessionString = await getSession(req, res);
+    const session = JSON.parse(sessionString);
+    if (!isBrowser() &amp;&amp; session.user) {
+      res.writeHead(302, { Location: '/' });
+      res.end();
+    }
+    return { props: { session }}
+}
+export default Signup;
+</code></pre></div></div>
+
+<h4 id="step-2">Step 2</h4>
+<p>Install the <em>react-facebook-login</em> package for Facebook login button and the <em>axios</em> package to make api calls to save user credentials.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    yarn add react-facebook-login axios
+</code></pre></div></div>
+<p>To authenticate with facebook you need to go to <a href="">developers.facebook.com</a> and create an application to have an app id. Copy your app Id and make it the value of the appId attribute of the FacebookLogin component above. Here is an online that <a href="https://webkul.com/blog/how-to-generate-facebook-app-id/">tutorial</a> that shows how you can generate an appId for your app. When you are done setting up your app and updating the appId  property of the FacebookLogin button, reload the Signup page. You should have the result below.</p>
+
+<p><img src="./images/signup.PNG" style="display: block; margin: auto;" /></p>
+
+<p><strong>Notice</strong> the isBrowser and getServerSideProps functions, isBrowser tests if the component is running from a server or browser window and getServerSideProps is a NextJs function to pass properties to the client component on server-side rendering. We can have our sign up component without the above functions, but in our case we want to track if a user has an active session and redirect the user to the index page. We are using the NextJS router and useState when we cover react hooks later in the tutorial.</p>
+
+<p>Data returned by the getServerSideProps function is passed as an argument to the Signup functional component. This argument represents the properties of the functional component. Props properties can also be passed to other child components as attributes as we can observe with the <code class="language-plaintext highlighter-rouge">&lt;AppHeader session={props.session} /&gt;</code>.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;AppHeader</span> <span class="na">session=</span><span class="s">{props.session}</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+<h4 id="step-3">Step 3</h4>
+<p>Now let’s connect the signup with the backend to save registered users to the database. The base app backend is already setup for authentication. Replace the <code class="language-plaintext highlighter-rouge">onSignUpResponse</code> callback with the following code.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    const onSignUpResponse = (response) =&gt; {        
+        if (!response.id) {
+            // prints error to screen
+            setErrorMessage('Unable to sign up to Facebook.');
+            return false;
+        }
+        const postBody = { ...response, providerAccessToken: response.accessToken, provider: 'facebook'};
+        return axios({
+            method: 'POST',
+            url: '/api/user/signup',
+            postBody,
+            validateStatus: () =&gt; true
+        })
+        .then((res) =&gt; {
+            if (res.status === 200) {
+                // redirect to login page
+                router.push('/login');
+            } else {
+                setErrorMessage(res.data.message);
+            }
+        })
+        .catch((error) =&gt; {
+            setErrorMessage(error);
+        });
+    };
+</code></pre></div></div>
+<p>For the Facebook button to work properly we need to do one more thing.</p>
+
+<h4 id="step-4">Step 4</h4>
+<p>Facebook authentication must be done over https. To be able to that on localhost we will need to download <a href="https://ngrok.com/download">Ngrok</a> to expose our server to the internet, this will equally create an https link we can use as domain on our facebook app settings.
+When you must have downloaded ngrok, save the executable in your project folder or where you can easily reach it. I saved mine one directory above my project. Make sure the spo-tuto application is running, copy the port number and in your terminal run the ngrok program.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ../ngrok.exe http 3000
+</code></pre></div></div>
+<p>Ngrok will create a proxy to your local server. For the free account the generated link is valid for 7 hours 49 minutes.</p>
+
+<p><img src="http://localhost:4000/images/ngrok.PNG" style="display: block; margin: auto;" /></p>
+
+<h4 id="step-5">Step 5</h4>
+<p>Copy the https link, go to the dashboard of the Facebook app you created earlier, follow <em>Settings &gt; Basic</em> scroll down to <em>Website</em> and update the site URL field. Note if you don’t do this Facebook will not recognize the domain accessing its auth service and your login will fail and Login with facebook will not work.</p>
+
+<p><img src="http://localhost:4000/images/facebook.PNG" style="display: block; margin: auto;" /></p>
+
+<h4 id="step-6">Step 6</h4>
+<p>Now we go to the browser link to the secured link generared by ngrok. Try to Register with Facebook, the users object is returned with information concerning the user such as Name, email, id and profile picture, which is saved to the database and redirects us to the login page.</p>
+
+<p>The login page has been implemented, open <em>pages/login.js</em> you will notice there is no significant difference with the signup page. Separating both files was to allow for subsequent updates on other means of authentication and equally separating the login process from the signup process. After login with Facebook you should see the index page.</p>
+
+<p><img src="http://localhost:4000/images/logged_in.PNG" style="display: block; margin: auto;" /></p>
+
+<h3 id="intergrating-flutterwave">Intergrating Flutterwave</h3>
+<p>We are now going to integrate Card payments with Flutterwave in our application. Some react concepts we will come across are react hooks, how to manipulate the Virtual DOM, suspense and lazy loading.</p>
+<h4 id="hooks">Hooks</h4>
+<p>Before integrating Flutterwave lets first talk about Hooks. Hooks were introduced in react version 16.8 , to give developers the ability to manipulate state and  use react features in functional components. In this tutorial we look at some of the common hooks useState, useEffect and useRef.</p>
+<ul>
+  <li><strong><em>useState</em></strong> hook is an api that allows the user to manage component state. That is if you have a state variable (a variable you want to track when it changes and update accordingly), useState will initialise the variable and return a function you can use to update the variable.
+    <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  const [variableName, setVariableState] = useState('initialValue')
+</code></pre></div>    </div>
+    <p>The function setVariableState will be used to update the variable.</p>
+  </li>
+  <li><strong><em>useEffect</em></strong>  hook accepts a function and runs this function during a render phase or when component state changes. You can pass a useEffect an array of state variables, useEffect will run the passed function each time any of these variables changes. Passing an empty array will make useEffect to run just once. You can have many useEffect calls in your component.
+    <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  useEffect( () =&gt; {
+      // this function will be run everything as application is rerendered.
+  })
+</code></pre></div>    </div>
+  </li>
+  <li><strong><em>useRef</em></strong>  hook is used to manipulate DOM, it is recommendated not to over use it. React uses a virtual DOM, useRef api will give the programmer access to the real DOM elements.
+    <h4 id="step-1-building-the-transaction-and-payment-widget">Step 1: Building the Transaction and Payment widget</h4>
+    <p>The Transaction component will make use of hooks. The transaction page will contain the list of payments made to the platform. Also we will create a paymentWidget which will be called from the payment modal. Users of SPYO top up their accounts with cash which they can later use on the platform to either reward fans who support their campaign or support businesses to reward fans.</p>
+  </li>
+</ul>
+
+<p>Create a file <em>pages/transactions.js</em> and write in the following code.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// pages/transactions.js
+
+import { useState, useEffect, useRef } from 'react';
+import path from 'path';
+import mongoose from 'mongoose';
+import PropertiesReader from 'properties-reader';
+import { getSession } from '../helpers/session-helpers';
+import AppHeader from '../components/partials/appHeader';
+
+function isBrowser() {
+    return typeof window !== 'undefined';
+}
+const  Transactions = ({session, currency, errorMessage, topUpQuota}) =&gt; {
+    const [error, setErrorMessage] = useState('');
+    const [runningBalance, setRunningBalance] = useState(0.0);
+    const [totalBalance, setTotalBalance] = useState(0.0);
+    const [transactions, setTransactions] = useState([]);
+    const paymentModalRef = useRef(null);
+    const openPaymentModal = () =&gt; {
+        paymentModalRef.current.classList.add('is-active');
+    }
+    return <span class="nt">&lt;&gt;</span>
+        <span class="nt">&lt;AppHeader</span> <span class="na">session=</span><span class="s">{session}</span> <span class="na">errorMessage=</span><span class="s">{error</span> <span class="err">||</span> <span class="na">errorMessage</span><span class="err">}</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;main</span> <span class="na">className=</span><span class="s">"columns"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;aside</span> <span class="na">className=</span><span class="s">"column is-hidden-mobile"</span><span class="nt">&gt;&lt;/aside&gt;</span>
+            <span class="nt">&lt;article</span> <span class="na">className=</span><span class="s">"column is-two-thirds bg-default transaction-container"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"transaction-header bg-primary"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"header"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;h2</span> <span class="na">className=</span><span class="s">""</span><span class="nt">&gt;</span>Transactions<span class="nt">&lt;/h2&gt;</span> <span class="nt">&lt;button</span> <span class="na">className=</span><span class="s">"button is-accent"</span> <span class="na">onClick=</span><span class="s">{openPaymentModal}</span><span class="nt">&gt;</span>Top Up<span class="nt">&lt;/button&gt;</span>
+                    <span class="nt">&lt;/div&gt;</span>
+                    <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"columns sub-header"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"column balances"</span><span class="nt">&gt;</span>
+                            <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"total is-text-warning"</span><span class="nt">&gt;</span>Balance: {totalBalance} <span class="ni">&amp;nbsp;</span>{currency}<span class="nt">&lt;/span&gt;</span>
+                            <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"running"</span><span class="nt">&gt;</span>Running: {runningBalance} <span class="ni">&amp;nbsp;</span>{currency}<span class="nt">&lt;/span&gt;</span>
+                        <span class="nt">&lt;/div&gt;</span>
+                        <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"column filters is-hidden-mobile"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;/div&gt;</span>
+                    <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"transaction-content"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;table</span> <span class="na">class=</span><span class="s">"table is-bordered"</span><span class="nt">&gt;</span>
+                            <span class="nt">&lt;thead</span> <span class="na">className=</span><span class="s">"bg-primary"</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;th&gt;</span>#Ref<span class="nt">&lt;/th&gt;</span>
+                                <span class="nt">&lt;th&gt;</span>Reason<span class="nt">&lt;/th&gt;</span>
+                                <span class="nt">&lt;th&gt;</span>Amt / {currency}<span class="nt">&lt;/th&gt;</span>
+                                <span class="nt">&lt;th&gt;</span>Balance / {currency}<span class="nt">&lt;/th&gt;</span>
+                                <span class="nt">&lt;th&gt;</span>Date<span class="nt">&lt;/th&gt;</span>
+                            <span class="nt">&lt;/thead&gt;</span>
+                            <span class="nt">&lt;tbody&gt;</span>
+                                {
+                                    transactions ? 
+                                        transactions.map( (transaction, index) =&gt; 
+                                            <span class="nt">&lt;tr</span> <span class="na">key=</span><span class="s">{index}</span><span class="nt">&gt;</span>
+                                                <span class="nt">&lt;td&gt;</span>{transaction.serial}<span class="nt">&lt;/td&gt;</span>
+                                                <span class="nt">&lt;td&gt;</span>{transaction.reason}<span class="nt">&lt;/td&gt;</span>
+                                                <span class="nt">&lt;td&gt;</span>{transaction.amount}<span class="nt">&lt;/td&gt;</span>
+                                                <span class="nt">&lt;td&gt;</span>{transaction.amount - topUpQuota<span class="err">*</span>transaction.amount}<span class="nt">&lt;/td&gt;</span>
+                                                <span class="nt">&lt;td&gt;</span>{transaction.createdAt}<span class="nt">&lt;/td&gt;</span>
+                                            <span class="nt">&lt;/tr&gt;</span>) : <span class="nt">&lt;tr&gt;</span>No transaction.<span class="nt">&lt;/tr&gt;</span>
+                                }
+                            <span class="nt">&lt;/tbody&gt;</span>
+                        <span class="nt">&lt;/table&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;/article&gt;</span>
+            <span class="nt">&lt;aside</span> <span class="na">className=</span><span class="s">"column is-hidden-mobile"</span><span class="nt">&gt;&lt;/aside&gt;</span>
+        <span class="nt">&lt;/main&gt;</span>
+    <span class="nt">&lt;/&gt;</span>
+}
+export async function getServerSideProps( { req, res }) {
+    const sessionString = await getSession(req, res);
+    const session = JSON.parse(sessionString);
+    const properties = PropertiesReader(path.resolve('app.properties'));
+    // amount charged for each transaction to the user, ie. platform charges
+    const paymentQuotaTopProp = 'payment.quota.topup';
+    const paymentQuotaTop = properties.get(paymentQuotaTopProp);
+    if (!isBrowser() &amp;&amp; !session.user) {
+        res.writeHead(302, { Location: '/login' });
+        res.end();
+    }
+    const currency = session.user.currency || 'XAF';
+    return {
+        props: { 
+            session,
+            currency,
+            topUpQuota: Number(paymentQuotaTop)
+        }
+    }
+}
+export default Transactions;
+</code></pre></div></div>
+<p>In the above code we used useState hook to create and intialize state variables <em>transactions</em>,<em>runningBalance</em>, <em>totalBalance</em> and <em>errorMessage</em>. Next will be creating the PaymentModal and PaymentWidget components. Notice we already have an <em>openPaymentModal</em> onClick handler to registered on the <em>Top Up</em> button to make payments to the platform.</p>
+
+<p><img src="http://localhost:4000/images/transaction_bare.PNG" style="display: block; margin: auto;" /></p>
+
+<p>The PaymentCardWidget component has been included in the spo-tuto-base repo, it is found in the <em>component/partial/widgets/PaymentCardWidget.js</em> file.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// component/partial/widgets/PaymentCardWidget.js
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { usePaymentInputs } from 'react-payment-inputs';
+import axios from 'axios';
+import PaymentIcon from "react-payment-icons-inline";
+
+import images from 'react-payment-inputs/images';
+
+const PaymentCardWidget = ({currency, quota}) =&gt; {
+    ...<span class="sb">
+
+    // initiate a payment request
+    const initiatePayment = () =&gt; {
+        ...
+    }
+    // submit extra data to start payment
+    const finalizePayment = (payload) =&gt; {
+        ...
+    }   
+    return &lt;&gt;...&lt;/&gt;
+</span>}
+export default PaymentCardWidget;
+</code></pre></div></div>
+<p>Create the modal component from which we are going to call the PaymentCardWidget component above.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// component/partial/modal/paymentModal.js
+
+import React, {useEffect, useRef} from 'react';
+import PaymentCardWidget from '../widgets/PaymentCardWidget';
+const PaymentModal = React.forwardRef((props, ref) =&gt; {
+    const close = () =&gt; ref.current.classList.remove('is-active'); 
+    return (
+        <span class="nt">&lt;&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"modal payment-modal"</span> <span class="na">ref=</span><span class="s">{ref}</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"modal-background"</span><span class="nt">&gt;&lt;/div&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"modal-content bg-default"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;PaymentCardWidget</span> <span class="na">modal=</span><span class="s">{ref}</span> <span class="err">{...</span><span class="na">props</span><span class="err">}</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">"modal-close is-large"</span>  <span class="na">aria-label=</span><span class="s">"close"</span> <span class="na">onClick=</span><span class="s">{close}</span> <span class="nt">&gt;&lt;/button&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/&gt;</span>
+     )
+})
+export default PaymentModal;
+</code></pre></div></div>
+
+<p>We are almost done with the payment UI. Import the PaymentModal component into the Transaction Page.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ...
+    import PaymentModal from '../components/partials/modals/paymentModal';
+    ...
+</code></pre></div></div>
+<p>Below the &lt;table&gt; closing tag, add the PaymentModal component.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;PaymentModal</span> <span class="na">ref=</span><span class="s">{paymentModalRef}</span> <span class="err">{...{</span><span class="na">currency</span><span class="err">,</span> <span class="na">paymentUrl</span><span class="err">,</span> <span class="na">quota:</span> <span class="na">topUpQuota</span><span class="err">}}</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+<p>Note the ref attribute, in react you will create a reference only on a native HTML tag, since the modal we are targetting is instead found in the PaymentModal componenent we will forward the reference to the div element present on the PaymentModal component. You should notice on the PaymentModal component is wrapped in React.forwardRef call. This also allows us to control the child DOM from the parent component as can be seen in the body of the <em>openPaymentModal</em> function in <em>Transactions</em> Page Component.</p>
+
+<h2 id="step-2-create-an-account-on-flutterwave">Step 2: Create an account on Flutterwave</h2>
+<p>CONTINUED</p>
 
 <p>Your Pages site will use the layout and styles from the Jekyll theme you have selected in your <a href="https://github.com/tanerochris/ping-react/settings">repository settings</a>. The name of this theme is saved in the Jekyll <code class="language-plaintext highlighter-rouge">_config.yml</code> configuration file.</p>
 
