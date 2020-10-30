@@ -493,12 +493,119 @@ In your <a href="https://dashboard.flutterwave.com/dashboard/settings/apis">Flut
 <h3 id="make-a-card-payment-request">Make a Card payment request</h3>
 <p>Move to the <code class="language-plaintext highlighter-rouge">PaymentCardWidget</code> found in <em>components\partials\widgets\PaymentCardWidget.js</em>, this file was shared earlier. Flutterwave requires different information for different card payments. The function<code class="language-plaintext highlighter-rouge">createPaymentRequest</code> sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. <code class="language-plaintext highlighter-rouge">pages\api\transaction\cardPayment.js</code> backend controller processes payload from the createPaymentRequest client request.</p>
 
-<h3 id="initiate-payment-request">Initiate payment request</h3>
-<p>Once an initiate payment request is made the flutterwave returns a response body</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<p>Flutterwave provides <a href="https://developer.flutterwave.com/docs/test-cards">test cards</a> to test your code. Make sure on your Flutterwave dashboard you are switched to test mode.</p>
+
+<p>We will be using the test card
+Test MasterCard PIN authentication</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Card number: 5531 8866 5214 2950
+cvv: 564
+Expiry: 09/32
+Pin: 3310
+OTP: 12345
 </code></pre></div></div>
 
-<p>Your Pages site will use the layout and styles from the Jekyll theme you have selected in your <a href="https://github.com/tanerochris/ping-react/settings">repository settings</a>. The name of this theme is saved in the Jekyll <code class="language-plaintext highlighter-rouge">_config.yml</code> configuration file.</p>
+<h3 id="initiate-payment-request">Initiate payment request</h3>
+<p>Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type needed to initiate a payment.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "status": "success",
+  "message": "Charge authorization data required",
+  "meta": {
+    "authorization": {
+      "mode": "pin",
+      "fields": [
+        "pin"
+      ]
+    }
+  }
+}
+</code></pre></div></div>
+<p>The authorization required by the card above is pin. So we will need to provide the pin, we allow for the same payment widget to be used for the payment process. In the payment widget the <code class="language-plaintext highlighter-rouge">existPaymentRequest</code> boolean variable tracks if a payment request has been made, and specifies what handler will be called on the next Pay button click.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;button</span> <span class="na">className=</span><span class="s">"button is-primary"</span> <span class="na">onClick=</span><span class="s">{existPaymentRequest</span> <span class="err">?</span> <span class="na">initiatePayment</span> <span class="na">:</span> <span class="na">createPaymentRequest</span><span class="err">}</span><span class="nt">&gt;</span>Pay<span class="nt">&lt;/button&gt;</span>
+</code></pre></div></div>
+<p>Our selected card needs a pin to authorize payment, in the payment widget there is logic to request additional information from the user.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// components\partials\widgets\PaymentCardWidget.js
+    const createPaymentRequest = () =&gt; {
+        ...
+        const postData = {...};
+        return axios({...})
+        .then((res) =&gt; {
+             if (res.status === 200) {
+                const authMode = res.data.mode;
+                switch(authMode) {
+                    case 'pin':
+                        setAuthType('pin'); // set the authtype required
+                        additionalInputRef.current.classList.remove('is-hidden'); // Show additional input needed
+                        pinRef.current.classList.remove('is-hidden'); // show pin input
+                        addressRef.current.classList.add('is-hidden'); // hide address input
+                        setExistPaymentRequest(true);
+                        break;
+                    case 'avs_noauth':
+                        setAuthType('avs_noauth'); // set the authtype required
+                        additionalInputRef.current.classList.remove('is-hidden'); // Show additional input needed
+                        addressRef.current.classList.remove('is-hidden'); // show address inputs
+                        pinRef.current.classList.add('is-hidden'); // hide payment
+                        setExistPaymentRequest(true);
+                        break;
+                    case 'redirect':
+                        location.assign(res.data.redirect); // authorization needed redirect to payment url to make payment.                                      
+                        break;
+                    default:
+                }
+            } else {
+                ...
+            }
+        })
+        .catch((error) =&gt; {
+            ...
+        });
+    }
+</code></pre></div></div>
+<p>The following code section in <em>components\partials\widgets\PaymentCardWidget.js</em> will show additional information based on the type of authentication.</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"column payment-methods-content is-hidden"</span> <span class="na">ref=</span><span class="s">{additionalInputRef}</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field is-hidden has-text-centered"</span> <span class="na">ref=</span><span class="s">{pinRef}</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;span&gt;</span>You need to provide additional card details to complete this transaction.<span class="nt">&lt;/span&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">placeholder=</span><span class="s">"PIN"</span> <span class="na">name=</span><span class="s">"pin"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{pin}</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"address is-hidden has-text-centered"</span> <span class="na">ref=</span><span class="s">{addressRef}</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;span&gt;</span>You need to provide additional card details to complete this transaction.<span class="nt">&lt;/span&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">name=</span><span class="s">"city"</span> <span class="na">placeholder=</span><span class="s">"City"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{city}</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">name=</span><span class="s">"address"</span> <span class="na">placeholder=</span><span class="s">"Address"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{address}</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">placeholder=</span><span class="s">"State"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"state"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{state}</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">placeholder=</span><span class="s">"Zip"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"zip"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{zip}</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">className=</span><span class="s">"input"</span> <span class="na">placeholder=</span><span class="s">"Country"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"country"</span> <span class="na">onChange=</span><span class="s">{handleInputChange}</span> <span class="na">value=</span><span class="s">{country}</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+<p><img src="./images/w1.PNG" style="display: block; margin: auto;" /></p>
+
+<h3 id="complete-payment">Complete payment</h3>
+<p>After filling additional details and initating payment, an OTP code is sent to the users email or phonenumber, in our case at the backend I used the current session users email. You can as well add an email or phonenumber input to the PaymentWidget. The different authorizations mode need to be handled differently.</p>
+<ol>
+  <li>
+    <p>With pin authorization, you need to create a page in your app that will accept the OTP and confirm payment.
+<img src="./images/w2.PNG" style="display: block; margin: auto;" /></p>
+  </li>
+  <li>
+    <p>with avs_noauth and no authorization , you will be redirected to a flutterwave link to enter the otp code and later redirected to the redirection link entered in the request body during the payment initialization step.
+<img src="./images/w3.PNG" style="display: block; margin: auto;" /></p>
+  </li>
+</ol>
+
+<p>To complete payment we create a payment page <code class="language-plaintext highlighter-rouge">pages\payment.js</code>. This page will do two things.</p>
+<ol>
+  <li>For pin authorization it will accept pin , then call the <code class="language-plaintext highlighter-rouge">completeCardPayment</code> function to complete payment. After payment is completed, the user is redirected to the transaction page.</li>
+  <li>For no authorization modes, the page will gather payment details from the query params, then call the <code class="language-plaintext highlighter-rouge">completeCardPayment</code> function to complete payment. After payment is completed, the user is redirected to the transaction page. Note that the link to the payment page is the redirect url passed during the initiate payment stage of the payment workflow.</li>
+</ol>
 
 <h3 id="support-or-contact">Support or Contact</h3>
 

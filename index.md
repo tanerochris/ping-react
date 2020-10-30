@@ -473,14 +473,118 @@ In your [Flutterwave dashboard](https://dashboard.flutterwave.com/dashboard/sett
 ### Make a Card payment request
 Move to the ```PaymentCardWidget``` found in _components\partials\widgets\PaymentCardWidget.js_, this file was shared earlier. Flutterwave requires different information for different card payments. The function```createPaymentRequest``` sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. ```pages\api\transaction\cardPayment.js``` backend controller processes payload from the createPaymentRequest client request.
 
+Flutterwave provides [test cards](https://developer.flutterwave.com/docs/test-cards) to test your code. Make sure on your Flutterwave dashboard you are switched to test mode.
+
+We will be using the test card
+Test MasterCard PIN authentication
+```markdown
+Card number: 5531 8866 5214 2950
+cvv: 564
+Expiry: 09/32
+Pin: 3310
+OTP: 12345
+```
+
 ### Initiate payment request
-Once an initiate payment request is made the flutterwave returns a response body
+Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type needed to initiate a payment.
+```markdown
+{
+  "status": "success",
+  "message": "Charge authorization data required",
+  "meta": {
+    "authorization": {
+      "mode": "pin",
+      "fields": [
+        "pin"
+      ]
+    }
+  }
+}
 ```
-
+The authorization required by the card above is pin. So we will need to provide the pin, we allow for the same payment widget to be used for the payment process. In the payment widget the ```existPaymentRequest``` boolean variable tracks if a payment request has been made, and specifies what handler will be called on the next Pay button click.
+```markdown
+    <button className="button is-primary" onClick={existPaymentRequest ? initiatePayment : createPaymentRequest}>Pay</button>
 ```
+Our selected card needs a pin to authorize payment, in the payment widget there is logic to request additional information from the user.
+```
+// components\partials\widgets\PaymentCardWidget.js
+    const createPaymentRequest = () => {
+        ...
+        const postData = {...};
+        return axios({...})
+        .then((res) => {
+             if (res.status === 200) {
+                const authMode = res.data.mode;
+                switch(authMode) {
+                    case 'pin':
+                        setAuthType('pin'); // set the authtype required
+                        additionalInputRef.current.classList.remove('is-hidden'); // Show additional input needed
+                        pinRef.current.classList.remove('is-hidden'); // show pin input
+                        addressRef.current.classList.add('is-hidden'); // hide address input
+                        setExistPaymentRequest(true);
+                        break;
+                    case 'avs_noauth':
+                        setAuthType('avs_noauth'); // set the authtype required
+                        additionalInputRef.current.classList.remove('is-hidden'); // Show additional input needed
+                        addressRef.current.classList.remove('is-hidden'); // show address inputs
+                        pinRef.current.classList.add('is-hidden'); // hide payment
+                        setExistPaymentRequest(true);
+                        break;
+                    case 'redirect':
+                        location.assign(res.data.redirect); // authorization needed redirect to payment url to make payment.                                      
+                        break;
+                    default:
+                }
+            } else {
+                ...
+            }
+        })
+        .catch((error) => {
+            ...
+        });
+    }
+```
+The following code section in _components\partials\widgets\PaymentCardWidget.js_ will show additional information based on the type of authentication.
+```markdown
+    <div className="column payment-methods-content is-hidden" ref={additionalInputRef}>
+        <div className="field is-hidden has-text-centered" ref={pinRef}>
+            <span>You need to provide additional card details to complete this transaction.</span>
+            <input className="input" placeholder="PIN" name="pin" type="text" onChange={handleInputChange} value={pin} />
+        </div>
+        <div className="address is-hidden has-text-centered" ref={addressRef}>
+            <span>You need to provide additional card details to complete this transaction.</span>
+            <div className="field">
+                <input className="input" name="city" placeholder="City" type="text" onChange={handleInputChange} value={city} />
+            </div>
+            <div className="field">
+                <input className="input" name="address" placeholder="Address" type="text" onChange={handleInputChange} value={address} />
+            </div>
+            <div className="field">
+                <input className="input" placeholder="State" type="text" name="state" onChange={handleInputChange} value={state} />
+            </div>
+            <div className="field">
+                <input className="input" placeholder="Zip" type="text" name="zip" onChange={handleInputChange} value={zip} />
+            </div>
+            <div className="field">
+                <input className="input" placeholder="Country" type="text" name="country" onChange={handleInputChange} value={country} />
+            </div>
+        </div>
+    </div>
+```
+<img src="./images/w1.PNG" style="display: block; margin: auto;" />
 
+### Complete payment
+After filling additional details and initating payment, an OTP code is sent to the users email or phonenumber, in our case at the backend I used the current session users email. You can as well add an email or phonenumber input to the PaymentWidget. The different authorizations mode need to be handled differently.
+1. With pin authorization, you need to create a page in your app that will accept the OTP and confirm payment.
+<img src="./images/w2.PNG" style="display: block; margin: auto;" />
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/tanerochris/ping-react/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+2. with avs_noauth and no authorization , you will be redirected to a flutterwave link to enter the otp code and later redirected to the redirection link entered in the request body during the payment initialization step.
+<img src="./images/w3.PNG" style="display: block; margin: auto;" />
+
+To complete payment we create a payment page ```pages\payment.js```. This page will do two things.
+1. For pin authorization it will accept pin , then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page.
+2. For no authorization modes, the page will gather payment details from the query params, then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page. Note that the link to the payment page is the redirect url passed during the initiate payment stage of the payment workflow.
+
 
 ### Support or Contact
 
