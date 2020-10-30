@@ -385,11 +385,11 @@ const PaymentCardWidget = ({currency, quota}) => {
     ...
 
     // initiate a payment request
-    const initiatePayment = () => {
+    const createPaymentRequest = () => {
         ...
     }
     // submit extra data to start payment
-    const finalizePayment = (payload) => {
+    const initiatePayment = (payload) => {
         ...
     }   
     return <>...</>
@@ -433,8 +433,52 @@ Below the <table> closing tag, add the PaymentModal component.
 ```
 Note the ref attribute, in react you will create a reference only on a native HTML tag, since the modal we are targetting is instead found in the PaymentModal componenent we will forward the reference to the div element present on the PaymentModal component. You should notice on the PaymentModal component is wrapped in React.forwardRef call. This also allows us to control the child DOM from the parent component as can be seen in the body of the _openPaymentModal_ function in _Transactions_ Page Component.
 
+<img src="./images/paymentWidget.PNG" style="display: block; margin: auto;" />
+
+
 ## Step 2: Create an account on Flutterwave 
-CONTINUED
+To integrate flutterwave api you will need to create and account on [Flutterwave](https://www.flutterwave.com/signup). 
+
+1. Go to [Flutterwave](https://www.flutterwave.com/signup) and fill the signup form.
+2. Check your email for verification link, you may have to check your spam for the email.
+3. Follow the verification email, you will need to specify how you want to use Flutterwave to accept payment.
+4. Select how you will want to accept payment from flutterwave. Select the option of your choice, for my case I chosed "To Accept Payment as an Individual".
+<img src="./images/flut1.PNG" style="display: block; margin: auto;" />
+
+5. You will be asked to provide some documents to verify your identity.
+6. Go to _settings_ and  configure your application.
+
+## Step 3: Integrate Flutterwave
+For a transaction to take place with Flutterwave three steps must be completed.
+1. Make a payment request
+2. Initiate payment
+3. Complete payment
+4. Verify transaction
+We need to first download the ```flutterwave-node-v3``` package. We can now move to the next stage.
+
+```markdown
+    yarn add flutterwave-node-v3
+```
+We are not yet there, lets setup keys that will enable us connect to the flutterwave platform and make payments.
+In your [Flutterwave dashboard](https://dashboard.flutterwave.com/dashboard/settings/apis) _settings > api_ your will see all keys required to connect and interact with the Flutterwave payment platform. Open the _app.properties_ and add the following properties, replace placeholders with corresponding key values.
+
+```markdown
+    payment.flutterwave.encryptionKey=ENCRIPTION_KEY
+    payment.flutterwave.publicKey=PUBLIC_KEY
+    payment.flutterwave.secretKey=SECRET_KEY
+    payment.flutterwave.redirectUrl=http://localhost:3000/campaign/payment
+```
+<img src="./images/keys.PNG" style="display: block; margin: auto;" />
+
+### Make a Card payment request
+Move to the ```PaymentCardWidget``` found in _components\partials\widgets\PaymentCardWidget.js_, this file was shared earlier. Flutterwave requires different information for different card payments. The function```createPaymentRequest``` sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. ```pages\api\transaction\cardPayment.js``` backend controller processes payload from the createPaymentRequest client request.
+
+### Initiate payment request
+Once an initiate payment request is made the flutterwave returns a response body
+```
+
+```
+
 
 Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/tanerochris/ping-react/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 

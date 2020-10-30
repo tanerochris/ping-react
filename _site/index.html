@@ -17,7 +17,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
-    <link rel="stylesheet" href="/assets/css/style.css?v=f39d135ba3fc0215dd4c31245f24fb05181266ae">
+    <link rel="stylesheet" href="/assets/css/style.css?v=fa45a07aa01bc25149d109ca6d322a8cd9793043">
   </head>
   <body>
     <section class="page-header">
@@ -406,11 +406,11 @@ const PaymentCardWidget = ({currency, quota}) =&gt; {
     ...<span class="sb">
 
     // initiate a payment request
-    const initiatePayment = () =&gt; {
+    const createPaymentRequest = () =&gt; {
         ...
     }
     // submit extra data to start payment
-    const finalizePayment = (payload) =&gt; {
+    const initiatePayment = (payload) =&gt; {
         ...
     }   
     return &lt;&gt;...&lt;/&gt;
@@ -451,8 +451,52 @@ export default PaymentModal;
 </code></pre></div></div>
 <p>Note the ref attribute, in react you will create a reference only on a native HTML tag, since the modal we are targetting is instead found in the PaymentModal componenent we will forward the reference to the div element present on the PaymentModal component. You should notice on the PaymentModal component is wrapped in React.forwardRef call. This also allows us to control the child DOM from the parent component as can be seen in the body of the <em>openPaymentModal</em> function in <em>Transactions</em> Page Component.</p>
 
+<p><img src="./images/paymentWidget.PNG" style="display: block; margin: auto;" /></p>
+
 <h2 id="step-2-create-an-account-on-flutterwave">Step 2: Create an account on Flutterwave</h2>
-<p>CONTINUED</p>
+<p>To integrate flutterwave api you will need to create and account on <a href="https://www.flutterwave.com/signup">Flutterwave</a>.</p>
+
+<ol>
+  <li>Go to <a href="https://www.flutterwave.com/signup">Flutterwave</a> and fill the signup form.</li>
+  <li>Check your email for verification link, you may have to check your spam for the email.</li>
+  <li>Follow the verification email, you will need to specify how you want to use Flutterwave to accept payment.</li>
+  <li>
+    <p>Select how you will want to accept payment from flutterwave. Select the option of your choice, for my case I chosed “To Accept Payment as an Individual”.
+<img src="./images/flut1.PNG" style="display: block; margin: auto;" /></p>
+  </li>
+  <li>You will be asked to provide some documents to verify your identity.</li>
+  <li>Go to <em>settings</em> and  configure your application.</li>
+</ol>
+
+<h2 id="step-3-integrate-flutterwave">Step 3: Integrate Flutterwave</h2>
+<p>For a transaction to take place with Flutterwave three steps must be completed.</p>
+<ol>
+  <li>Make a payment request</li>
+  <li>Initiate payment</li>
+  <li>Complete payment</li>
+  <li>Verify transaction
+We need to first download the <code class="language-plaintext highlighter-rouge">flutterwave-node-v3</code> package. We can now move to the next stage.</li>
+</ol>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    yarn add flutterwave-node-v3
+</code></pre></div></div>
+<p>We are not yet there, lets setup keys that will enable us connect to the flutterwave platform and make payments.
+In your <a href="https://dashboard.flutterwave.com/dashboard/settings/apis">Flutterwave dashboard</a> <em>settings &gt; api</em> your will see all keys required to connect and interact with the Flutterwave payment platform. Open the <em>app.properties</em> and add the following properties, replace placeholders with corresponding key values.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    payment.flutterwave.encryptionKey=ENCRIPTION_KEY
+    payment.flutterwave.publicKey=PUBLIC_KEY
+    payment.flutterwave.secretKey=SECRET_KEY
+    payment.flutterwave.redirectUrl=http://localhost:3000/campaign/payment
+</code></pre></div></div>
+<p><img src="./images/keys.PNG" style="display: block; margin: auto;" /></p>
+
+<h3 id="make-a-card-payment-request">Make a Card payment request</h3>
+<p>Move to the <code class="language-plaintext highlighter-rouge">PaymentCardWidget</code> found in <em>components\partials\widgets\PaymentCardWidget.js</em>, this file was shared earlier. Flutterwave requires different information for different card payments. The function<code class="language-plaintext highlighter-rouge">createPaymentRequest</code> sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. <code class="language-plaintext highlighter-rouge">pages\api\transaction\cardPayment.js</code> backend controller processes payload from the createPaymentRequest client request.</p>
+
+<h3 id="initiate-payment-request">Initiate payment request</h3>
+<p>Once an initiate payment request is made the flutterwave returns a response body</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
 
 <p>Your Pages site will use the layout and styles from the Jekyll theme you have selected in your <a href="https://github.com/tanerochris/ping-react/settings">repository settings</a>. The name of this theme is saved in the Jekyll <code class="language-plaintext highlighter-rouge">_config.yml</code> configuration file.</p>
 
