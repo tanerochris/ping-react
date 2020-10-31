@@ -1,5 +1,5 @@
 ## Integrate Payment with Flutterwave and Facebook Authentication into a React Application.
-Hey there you have gone through the [react](https://reactjs.org/docs/getting-started.html) documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I have this site underconstruction [spyo.com](url), a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using [NextJs](url) -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses [Flutterwave](https://www.flutterwave.com/) - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.
+Hey there you have gone through the [react](https://reactjs.org/docs/getting-started.html) documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I have this site underconstruction [spyo.com](url), a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using [NextJs](https://nextjs.org/) -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses [Flutterwave](https://www.flutterwave.com/) - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.
 
 ### React concepts
 In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.
@@ -436,7 +436,7 @@ Note the ref attribute, in react you will create a reference only on a native HT
 <img src="./images/paymentWidget.PNG" style="display: block; margin: auto;" />
 
 
-## Step 2: Create an account on Flutterwave 
+#### Step 2: Create an account on Flutterwave 
 To integrate flutterwave api you will need to create and account on [Flutterwave](https://www.flutterwave.com/signup). 
 
 1. Go to [Flutterwave](https://www.flutterwave.com/signup) and fill the signup form.
@@ -448,7 +448,7 @@ To integrate flutterwave api you will need to create and account on [Flutterwave
 5. You will be asked to provide some documents to verify your identity.
 6. Go to _settings_ and  configure your application.
 
-## Step 3: Integrate Flutterwave
+#### Step 3: Integrate Flutterwave
 For a transaction to take place with Flutterwave three steps must be completed.
 1. Make a payment request
 2. Initiate payment
@@ -470,7 +470,7 @@ In your [Flutterwave dashboard](https://dashboard.flutterwave.com/dashboard/sett
 ```
 <img src="./images/keys.PNG" style="display: block; margin: auto;" />
 
-### Make a Card payment request
+**Make a Card payment request**
 Move to the ```PaymentCardWidget``` found in _components\partials\widgets\PaymentCardWidget.js_, this file was shared earlier. Flutterwave requires different information for different card payments. The function```createPaymentRequest``` sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. ```pages\api\transaction\cardPayment.js``` backend controller processes payload from the createPaymentRequest client request.
 
 Flutterwave provides [test cards](https://developer.flutterwave.com/docs/test-cards) to test your code. Make sure on your Flutterwave dashboard you are switched to test mode.
@@ -490,7 +490,6 @@ Payment request payload
 {
   "name": "John Doe",
   "card_number": "5531886652142950",
-  "phonenumber": "",
   "email": "",
   "cvc": "564",
   "expiry_date": "09 / 32",
@@ -503,14 +502,13 @@ Payment request payload
   "country": "",
   "expiry_month": "09",
   "expiry_year": "32",
-  "email": "demo@xmail.com",
   "tx_ref": "100000005",
   "enckey": "xxxxxxxxxxxxxxxxxxxx",
-  "redirect_url": "http://localhost:3000/campaign/payment"
+  "redirect_url": "http://localhost:3000/payment"
 }
 ```
-### Initiate payment request
-Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type needed to initiate a payment.
+**Initiate payment request**
+Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type is needed to initiate a payment.
 ```markdown
 {
   "status": "success",
@@ -597,7 +595,82 @@ The following code section in _components\partials\widgets\PaymentCardWidget.js_
 ```
 <img src="./images/w1.PNG" style="display: block; margin: auto;" />
 
-### Complete payment
+Payload sent to Flutterwave to initiate payment process
+```markdown
+{
+  "name": "Tane",
+  "card_number": "5531886652142950",
+  "cvc": "564",
+  "reason": "Reward",
+  "type": "card",
+  "currency": "XAF",
+  "amount": 2000,
+  "authorization": {
+    "mode": "pin",
+    "pin": "3310"
+  },
+  "expiry_month": "09",
+  "expiry_year": "32",
+  "email": "demo@xmail.com",
+  "phone_number": "",
+  "tx_ref": "100000005",
+  "enckey": "xxxxxxxxxxxxxxxxxxxxxxxx",
+  "redirect_url": "http://localhost:3000/payment"
+}
+```
+
+Response on payment initiation
+```markdown
+{
+  "status": "success",
+  "message": "Charge initiated",
+  "data": {
+    "id": 1665371,
+    "tx_ref": "100000006",
+    "flw_ref": "FLW-MOCK-97ed4f455f5bd4ba5cc4026802f39f29",
+    "device_fingerprint": "N/A",
+    "amount": 2000,
+    "charged_amount": 2000,
+    "app_fee": 76,
+    "merchant_fee": 0,
+    "processor_response": "Please enter the OTP sent to your mobile number 080****** and email te**@rave**.com",
+    "auth_model": "PIN",
+    "currency": "XAF",
+    "ip": "::ffff:10.67.186.14",
+    "narration": "CARD Transaction ",
+    "status": "pending",
+    "auth_url": "N/A",
+    "payment_type": "card",
+    "plan": null,
+    "fraud_status": "ok",
+    "charge_type": "normal",
+    "created_at": "2020-10-31T04:50:48.000Z",
+    "account_id": 118468,
+    "customer": {
+      "id": 517427,
+      "phone_number": null,
+      "name": "Anonymous customer",
+      "email": "demo@gmail.com",
+      "created_at": "2020-10-31T04:50:47.000Z"
+    },
+    "card": {
+      "first_6digits": "553188",
+      "last_4digits": "2950",
+      "issuer": "MASTERCARD  CREDIT",
+      "country": "NG",
+      "type": "MASTERCARD",
+      "expiry": "09/32"
+    }
+  },
+  "meta": {
+    "authorization": {
+      "mode": "otp",
+      "endpoint": "/v3/validate-charge"
+    }
+  }
+}
+```
+**Complete payment**
 After filling additional details and initating payment, an OTP code is sent to the users email or phonenumber, in our case at the backend I used the current session users email. You can as well add an email or phonenumber input to the PaymentWidget. The different authorizations mode need to be handled differently.
 1. With pin authorization, you need to create a page in your app that will accept the OTP and confirm payment.
 <img src="./images/w2.PNG" style="display: block; margin: auto;" />
@@ -609,10 +682,72 @@ To complete payment we create a payment page ```pages\payment.js```, this has al
 1. For pin authorization it will accept pin , then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page.
 2. For no authorization modes, the page will gather payment details from the query params, then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page. Note that the link to the payment page is the redirect url passed during the initiate payment stage of the payment workflow.
 
-### Verify transaction
-In the backend, upon completing payment, a call to verify payment must be made. 
+Payload sent to Flutterwave to complete payment.
+```markdown
+{
+  "otp": "12345",
+  "flw_ref": "FLW-MOCK-6deb1aa461865414a4a274df78397291"
+}
+```
+Response on completing payment
+```markdown
+    {}
+```
+**Verify transaction**
+In the backend, upon completing payment, a call to verify payment must be made using the Id of the completed transaction. In the payment verification response below data.processor_response is 'successful' indicates that payment was successful. 
 
-### Payment backend
+Payload sent to Flutterwave 
+```markdown
+{
+    "id":1665320
+}
+```
+Flutterwave response upon verifying payment.
+```markdown
+{
+  status: 'success',
+  message: 'Transaction fetched successfully',
+  data: {
+    id: 1665320,
+    tx_ref: '100000005',
+    flw_ref: 'FLW-MOCK-6deb1aa461865414a4a274df78397291',
+    device_fingerprint: 'N/A',
+    amount: 2000,
+    currency: 'XAF',
+    charged_amount: 2000,
+    app_fee: 76,
+    merchant_fee: 0,
+    processor_response: 'successful',
+    auth_model: 'PIN',
+    ip: '::ffff:10.65.248.108',
+    narration: 'CARD Transaction ',
+    status: 'successful',
+    payment_type: 'card',
+    created_at: '2020-10-31T04:08:49.000Z',
+    account_id: 118468,
+    card: {
+      first_6digits: '553188',
+      last_4digits: '2950',
+      issuer: ' CREDIT',
+      country: 'NIGERIA NG',
+      type: 'MASTERCARD',
+      token: 'flw-t1nf-dd9f5ed8aceaeb3d0ad66f68e0f2cf5a-m03k',
+      expiry: '09/32'
+    },
+    meta: null,
+    amount_settled: 1924,
+    customer: {
+      id: 517424,
+      name: 'Anonymous customer',
+      phone_number: 'N/A',
+      email: 'demo@xmail.com',
+      created_at: '2020-10-31T04:08:48.000Z'
+    }
+  }
+}
+```
+
+#### Payment backend
 In the backend 2 Controllers files handle client transaction requests. The ```pages\api\transaction\cardPayment.js``` controller manages payment request and payment initiation calls. The ```pages\api\transaction\completeCardPayment.js``` controller handle client requests concerned with validating and verifying card payment was successful. Both the ```PaymentCardHandler``` and ```CompleteCardPaymentHandler``` use functions from the ```helpers\payment.js``` file.
 
 ```markdown
@@ -636,6 +771,22 @@ export const verifyCardPayment = async (payload) => {
     return payment;
 }
 ```
-### Support or Contact
+### Loading and Updating Transactions
+Finally we are done with integrating payment. Now we want to display our transactions. Here we are going to use Hooks and Suspense.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+## Support or Contact
+Facebook [login](https://developers.facebook.com/docs/facebook-login/)
+React [docs](https://reactjs.org/docs/getting-started.html)
+Flutterwave V3 Card payment api [docs](https://developer.flutterwave.com/docs/card-payments)
+Flutterwave card [test](https://developer.flutterwave.com/docs/test-cards)
+Tutorial codebase [repo](https://github.com/tanerochris/spo-tuto-base)
+Tutorial [repo](https://github.com/tanerochris/ping-react)
+For questions or bugs create an issue on the tutorial codebase repo or tutorial itself.
+
+## Author
+Tane J. Tangu, Software Engineer
+_Email_ tanejuth@gmail.com
+_Twitter_ @tanerochris
+_LinkedIn_  https://www.linkedin.com/in/tane-j-tangu-72034ba8/
+
