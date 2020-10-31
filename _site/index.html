@@ -17,7 +17,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
-    <link rel="stylesheet" href="/assets/css/style.css?v=fa45a07aa01bc25149d109ca6d322a8cd9793043">
+    <link rel="stylesheet" href="/assets/css/style.css?v=f5b144a8762ef1c8fbab37d4efd2a60f27812189">
   </head>
   <body>
     <section class="page-header">
@@ -31,7 +31,7 @@
 
     <section class="main-content">
       <h2 id="integrate-payment-with-flutterwave-and-facebook-authentication-into-a-react-application">Integrate Payment with Flutterwave and Facebook Authentication into a React Application.</h2>
-<p>Hey there you have gone through the <a href="url">react</a> documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I built <a href="url">spyo.com</a>, a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using <a href="url">NextJs</a> -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses <a href="https://www.flutterwave.com/">Flutterwave</a> - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
+<p>Hey there you have gone through the <a href="https://reactjs.org/docs/getting-started.html">react</a> documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I have this site underconstruction <a href="url">spyo.com</a>, a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using <a href="url">NextJs</a> -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses <a href="https://www.flutterwave.com/">Flutterwave</a> - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
 
 <h3 id="react-concepts">React concepts</h3>
 <p>In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.</p>
@@ -503,7 +503,30 @@ Expiry: 09/32
 Pin: 3310
 OTP: 12345
 </code></pre></div></div>
+<p>Payment request payload</p>
 
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "name": "John Doe",
+  "card_number": "5531886652142950",
+  "phonenumber": "",
+  "email": "",
+  "cvc": "564",
+  "expiry_date": "09 / 32",
+  "type": "card",
+  "currency": "XAF",
+  "amount": 2000,
+  "state": "",
+  "city": "",
+  "address": "",
+  "country": "",
+  "expiry_month": "09",
+  "expiry_year": "32",
+  "email": "demo@xmail.com",
+  "tx_ref": "100000005",
+  "enckey": "xxxxxxxxxxxxxxxxxxxx",
+  "redirect_url": "http://localhost:3000/campaign/payment"
+}
+</code></pre></div></div>
 <h3 id="initiate-payment-request">Initiate payment request</h3>
 <p>Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type needed to initiate a payment.</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
@@ -601,12 +624,38 @@ OTP: 12345
   </li>
 </ol>
 
-<p>To complete payment we create a payment page <code class="language-plaintext highlighter-rouge">pages\payment.js</code>. This page will do two things.</p>
+<p>To complete payment we create a payment page <code class="language-plaintext highlighter-rouge">pages\payment.js</code>, this has already been created for you. This page does two things.</p>
 <ol>
   <li>For pin authorization it will accept pin , then call the <code class="language-plaintext highlighter-rouge">completeCardPayment</code> function to complete payment. After payment is completed, the user is redirected to the transaction page.</li>
   <li>For no authorization modes, the page will gather payment details from the query params, then call the <code class="language-plaintext highlighter-rouge">completeCardPayment</code> function to complete payment. After payment is completed, the user is redirected to the transaction page. Note that the link to the payment page is the redirect url passed during the initiate payment stage of the payment workflow.</li>
 </ol>
 
+<h3 id="verify-transaction">Verify transaction</h3>
+<p>In the backend, upon completing payment, a call to verify payment must be made.</p>
+
+<h3 id="payment-backend">Payment backend</h3>
+<p>In the backend 2 Controllers files handle client transaction requests. The <code class="language-plaintext highlighter-rouge">pages\api\transaction\cardPayment.js</code> controller manages payment request and payment initiation calls. The <code class="language-plaintext highlighter-rouge">pages\api\transaction\completeCardPayment.js</code> controller handle client requests concerned with validating and verifying card payment was successful. Both the <code class="language-plaintext highlighter-rouge">PaymentCardHandler</code> and <code class="language-plaintext highlighter-rouge">CompleteCardPaymentHandler</code> use functions from the <code class="language-plaintext highlighter-rouge">helpers\payment.js</code> file.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// helpers<span class="se">\p</span>ayment.js
+
+// called to make payment request and initiate payment
+export const makePayment = async (payload) =&gt; {
+    payload.enckey = flwEncKey;
+    payload.redirect_url = flwRedUrl;
+    const payment = await flw.Charge.card(payload);
+    return payment;
+}
+// finalises a payment
+export const completeCardPayment = async (payload) =&gt; {
+    const completedPayment = flw.Charge.validate(payload);
+    return completedPayment;
+}
+// verifies that payment was done
+export const verifyCardPayment = async (payload) =&gt; {
+    const payment = flw.Transaction.verify(payload);
+    return payment;
+}
+</code></pre></div></div>
 <h3 id="support-or-contact">Support or Contact</h3>
 
 <p>Having trouble with Pages? Check out our <a href="https://docs.github.com/categories/github-pages-basics/">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>

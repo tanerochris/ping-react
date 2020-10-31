@@ -1,5 +1,5 @@
 ## Integrate Payment with Flutterwave and Facebook Authentication into a React Application.
-Hey there you have gone through the [react](url) documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I built [spyo.com](url), a campaign platform where brands get support from their fans in a bid to grow. Spyo was built using [NextJs](url) -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses [Flutterwave](https://www.flutterwave.com/) - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.
+Hey there you have gone through the [react](https://reactjs.org/docs/getting-started.html) documentation and some resources here and there and you are ready to put this knowledge to use. In this tutorial we are going to apply react knowledge by integrating payment into a react application. So I have this site underconstruction [spyo.com](url), a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using [NextJs](url) -  A framework for building react applications, MongoDB a NoSQL database on documents and Bulma react UI library kit and uses [Flutterwave](https://www.flutterwave.com/) - An african payment solution provider to make and accept payments from customers anywhere in the world.  By the end of this tutorial you should have build some part of Spyo, and learned the underlaying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.
 
 ### React concepts
 In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.
@@ -484,7 +484,31 @@ Expiry: 09/32
 Pin: 3310
 OTP: 12345
 ```
+Payment request payload
 
+```markdown
+{
+  "name": "John Doe",
+  "card_number": "5531886652142950",
+  "phonenumber": "",
+  "email": "",
+  "cvc": "564",
+  "expiry_date": "09 / 32",
+  "type": "card",
+  "currency": "XAF",
+  "amount": 2000,
+  "state": "",
+  "city": "",
+  "address": "",
+  "country": "",
+  "expiry_month": "09",
+  "expiry_year": "32",
+  "email": "demo@xmail.com",
+  "tx_ref": "100000005",
+  "enckey": "xxxxxxxxxxxxxxxxxxxx",
+  "redirect_url": "http://localhost:3000/campaign/payment"
+}
+```
 ### Initiate payment request
 Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type needed to initiate a payment.
 ```markdown
@@ -581,11 +605,37 @@ After filling additional details and initating payment, an OTP code is sent to t
 2. with avs_noauth and no authorization , you will be redirected to a flutterwave link to enter the otp code and later redirected to the redirection link entered in the request body during the payment initialization step.
 <img src="./images/w3.PNG" style="display: block; margin: auto;" />
 
-To complete payment we create a payment page ```pages\payment.js```. This page will do two things.
+To complete payment we create a payment page ```pages\payment.js```, this has already been created for you. This page does two things.
 1. For pin authorization it will accept pin , then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page.
 2. For no authorization modes, the page will gather payment details from the query params, then call the ```completeCardPayment``` function to complete payment. After payment is completed, the user is redirected to the transaction page. Note that the link to the payment page is the redirect url passed during the initiate payment stage of the payment workflow.
 
+### Verify transaction
+In the backend, upon completing payment, a call to verify payment must be made. 
 
+### Payment backend
+In the backend 2 Controllers files handle client transaction requests. The ```pages\api\transaction\cardPayment.js``` controller manages payment request and payment initiation calls. The ```pages\api\transaction\completeCardPayment.js``` controller handle client requests concerned with validating and verifying card payment was successful. Both the ```PaymentCardHandler``` and ```CompleteCardPaymentHandler``` use functions from the ```helpers\payment.js``` file.
+
+```markdown
+// helpers\payment.js
+
+// called to make payment request and initiate payment
+export const makePayment = async (payload) => {
+    payload.enckey = flwEncKey;
+    payload.redirect_url = flwRedUrl;
+    const payment = await flw.Charge.card(payload);
+    return payment;
+}
+// finalises a payment
+export const completeCardPayment = async (payload) => {
+    const completedPayment = flw.Charge.validate(payload);
+    return completedPayment;
+}
+// verifies that payment was done
+export const verifyCardPayment = async (payload) => {
+    const payment = flw.Transaction.verify(payload);
+    return payment;
+}
+```
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
