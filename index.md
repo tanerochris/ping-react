@@ -3,17 +3,17 @@
 Hey there you have gone through the [react documentation](https://reactjs.org/docs/getting-started.html) and some resources over the internet and you are ready to put this knowledge to use. In this tutorial, we are going to integrate Facebook Login and Flutterwave V3 rave API in a react application. So I have this site under construction spyo.com, a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using [NextJs](https://nextjs.org/) - A framework for building react applications, [MongoDB](https://www.mongodb.com/) a document-based database, the  [Bulma](https://bulma.io/) react UI library kit and  Flutterwave's Rave Card payment API. [Flutterwave](https://www.flutterwave.com/) is an African payment solution provider to make and accept payments from customers anywhere in the world. By the end of this tutorial, you should have built some parts of Spyo, and learned some underlying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.
 
 ### React concepts
-In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.
-- React funtional components
+In this tutorial we are going to cover the following react components or concepts:
+- React functional components
 - Props
 - Hooks
 - Ref
 - Suspense
 - Lazy loading
-
-## Lets get started
-### Installing required applications to run application
-The first step to this tutorial will be installing all relevant dependencies. Make sure you have the following installed [Node Js](https://nodejs.org/en/download/) for running the base application we shall be building on, [Mongo](https://docs.mongodb.com/manual/installation/) for application database, [git](https://git-scm.com/downloads) to clone the base app repository. After installing all dependencies required to run the app, the next step is to clone the application.
+ 
+## Let us get started
+### Installing required applications to run the application
+The first step to this tutorial will be installing all relevant dependencies. Make sure you have the following installed [Node Js](https://nodejs.org/en/download/) for running the base application we shall be building on, [Mongo](https://docs.mongodb.com/manual/installation/) for the application database, [git](https://git-scm.com/downloads) to clone the base app repository. After installing all dependencies required to run the app, the next step is to clone the application.
 
 ### Cloning base app repo
 Open your terminal and change to the directory on your PC you wish to clone the app and run the git clone command.
@@ -25,12 +25,12 @@ Install dependencies with yarn
 yarn install
 ```
 ### Running the app
-When you are done cloning, the name of application folder will be spo-tuto-base. Change to the spo-tuto-base directory and run yarn to start the application. We will start by running the application in developer mode.
+When you are done cloning, the name of the application folder will be spo-tuto-base. Change to the spo-tuto-base directory and run yarn to start the application. We will start by running the application in developer mode.
 ```markdown
     cd spo-tuto-base
     yarn dev
 ```
-In your browser go to the url **http://localhost:3000**, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this writeup we have setup the application with some design and functionality already.
+In your browser go to the URL **http://localhost:3000**, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this write up, the application is set up with some design and functionality already.
 
 <img src="./images/index.PNG" style="display: block; margin: auto;" />
 
@@ -41,7 +41,7 @@ To run the application in production mode, you first build the app for optimizat
     yarn start
 ```
 
-NextJS comes with react installed. To check for the version of react installed, open a new terminal session
+NextJS comes with react installed. To check for the version of react installed, open a new terminal session.
 ```markdown
     yarn list --pattern --depth=0 "^react*"
 ```

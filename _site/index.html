@@ -35,9 +35,9 @@
 <p>Hey there you have gone through the <a href="https://reactjs.org/docs/getting-started.html">react documentation</a> and some resources over the internet and you are ready to put this knowledge to use. In this tutorial, we are going to integrate Facebook Login and Flutterwave V3 rave API in a react application. So I have this site under construction spyo.com, a campaign platform where brands get support from their fans in a bid to grow. Spyo is built using <a href="https://nextjs.org/">NextJs</a> - A framework for building react applications, <a href="https://www.mongodb.com/">MongoDB</a> a document-based database, the  <a href="https://bulma.io/">Bulma</a> react UI library kit and  Flutterwave’s Rave Card payment API. <a href="https://www.flutterwave.com/">Flutterwave</a> is an African payment solution provider to make and accept payments from customers anywhere in the world. By the end of this tutorial, you should have built some parts of Spyo, and learned some underlying react concepts. The tutorial will cover authentication with Facebook, and the integration of payment with Flutterwave.</p>
 
 <h3 id="react-concepts">React concepts</h3>
-<p>In this tutorial we are going to cover the following react components or concepts.shall cover in this tutorial.</p>
+<p>In this tutorial we are going to cover the following react components or concepts:</p>
 <ul>
-  <li>React funtional components</li>
+  <li>React functional components</li>
   <li>Props</li>
   <li>Hooks</li>
   <li>Ref</li>
@@ -45,9 +45,9 @@
   <li>Lazy loading</li>
 </ul>
 
-<h2 id="lets-get-started">Lets get started</h2>
-<h3 id="installing-required-applications-to-run-application">Installing required applications to run application</h3>
-<p>The first step to this tutorial will be installing all relevant dependencies. Make sure you have the following installed <a href="https://nodejs.org/en/download/">Node Js</a> for running the base application we shall be building on, <a href="https://docs.mongodb.com/manual/installation/">Mongo</a> for application database, <a href="https://git-scm.com/downloads">git</a> to clone the base app repository. After installing all dependencies required to run the app, the next step is to clone the application.</p>
+<h2 id="let-us-get-started">Let us get started</h2>
+<h3 id="installing-required-applications-to-run-the-application">Installing required applications to run the application</h3>
+<p>The first step to this tutorial will be installing all relevant dependencies. Make sure you have the following installed <a href="https://nodejs.org/en/download/">Node Js</a> for running the base application we shall be building on, <a href="https://docs.mongodb.com/manual/installation/">Mongo</a> for the application database, <a href="https://git-scm.com/downloads">git</a> to clone the base app repository. After installing all dependencies required to run the app, the next step is to clone the application.</p>
 
 <h3 id="cloning-base-app-repo">Cloning base app repo</h3>
 <p>Open your terminal and change to the directory on your PC you wish to clone the app and run the git clone command.</p>
@@ -57,11 +57,11 @@
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yarn install
 </code></pre></div></div>
 <h3 id="running-the-app">Running the app</h3>
-<p>When you are done cloning, the name of application folder will be spo-tuto-base. Change to the spo-tuto-base directory and run yarn to start the application. We will start by running the application in developer mode.</p>
+<p>When you are done cloning, the name of the application folder will be spo-tuto-base. Change to the spo-tuto-base directory and run yarn to start the application. We will start by running the application in developer mode.</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    cd spo-tuto-base
     yarn dev
 </code></pre></div></div>
-<p>In your browser go to the url <strong>http://localhost:3000</strong>, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this writeup we have setup the application with some design and functionality already.</p>
+<p>In your browser go to the URL <strong>http://localhost:3000</strong>, you should see the base interface we shall be building with. To focus only on the essential react concepts to be presented in this write up, the application is set up with some design and functionality already.</p>
 
 <p><img src="./images/index.PNG" style="display: block; margin: auto;" /></p>
 
@@ -71,7 +71,7 @@
     yarn start
 </code></pre></div></div>
 
-<p>NextJS comes with react installed. To check for the version of react installed, open a new terminal session</p>
+<p>NextJS comes with react installed. To check for the version of react installed, open a new terminal session.</p>
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    yarn list --pattern --depth=0 "^react<span class="err">*</span>"
 </code></pre></div></div>
 <p>You should see the version of react installed together with other react packages. In my own case the above command produces the following output at the terminal. Notice we are working with version 16.13.1 of the react library which is currently the <a href="https://reactjs.org/versions/">latest</a> at the time of this writing.</p>
