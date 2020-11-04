@@ -696,7 +696,7 @@ Response on completing payment
 **Verify transaction**
 In the backend, upon completing payment, a call to verify payment must be made using the Id of the completed transaction. In the payment verification response below data.processor_response is 'successful' indicates that payment was successful. 
 
-Payload sent to Flutterwave 
+Payload sent to Flutterwave. 
 ```markdown
 {
     "id":1665320
