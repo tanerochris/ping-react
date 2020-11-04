@@ -45,7 +45,7 @@ NextJS comes with react installed. To check for the version of react installed, 
 ```markdown
     yarn list --pattern --depth=0 "^react*"
 ```
-You should see the version of react installed together with other react packages. In my own case the above command produces the following output at the terminal. Notice we are working with version 16.13.1 of the react library which is currently the [latest](https://reactjs.org/versions/) at the time of this writing.
+You should see the version of react installed together with other react packages. In my own case the above command produces the following output at the terminal. Notice we are working with version 16.13.1 of react which is currently the [latest](https://reactjs.org/versions/) at the time of this writing.
  
 ```markdown
     $ yarn list --pattern --depth=0 "^react*"
@@ -59,7 +59,7 @@ You should see the version of react installed together with other react packages
 ```
 
 ### Structure of the application
-We are going to look at the struture of the app, where each item will fit in, some screen shots at the output we wish to obtain.
+We are going to look at the structure of the app, where each item will fit in, some screen shots at the output we wish to obtain.
 
 ```
 .
@@ -95,8 +95,8 @@ NextJs is an opinionated  framework, it requires the pages and public folders to
 - An _app.properties_ file to hold variables that will be used across the app.
 
 ## Let's start building with react
-### Building the Signup - Authenticating with Facebook Login
-In react application is broken down into components were each component can be seen as an independent re-usable piece of code. In react there are two types of components functional components and class components. In this tutorial we shall using functional components as they allow us to use the concepts of hooks. Functional components are stateless components while class components are stateful as the come with a built-in component state object. Functional components make use of the useState hook to implement state to a component.
+### Building the Signup — Authenticating with Facebook Login
+In react application is broken down into components were each component can be seen as an independent re-usable piece of code. In react there are two types of components functional components and class components. In this tutorial we shall use functional components as they allow us to use the concepts of hooks. Functional components are stateless components while class components are stateful as the come with a built-in component state object. Functional components make use of the useState hook to implement state to a component.
 
 #### Class component
 ```markdown
@@ -124,13 +124,13 @@ In react application is broken down into components were each component can be s
     export default Login;
 ```
 
-#### props vs state
-In react the props object is used to pass information from a parent component to a child component. Attributes of a component become keys in the props object and the passed values are accessed through these attribute keys. In a react class component the prop object is imutable unlike the case of functional components. React class components manage component state by using the state property and setState method to update the state.
+#### props and state
+In react the props object is used to pass information from a parent component to a child component. Attributes of a component become keys in the props object and the passed values are accessed through these attribute keys. With a react class component the prop object is imutable unlike the case of functional components. React class components manage component state by using the state property and setState method to update the state.
 
 Now we are going to create our SignUp component that will represent the Signup page and authenticate with Facebook Login.
 
 #### Step 1
-In the _pages_ folder create the file _signup.js_ and type in the following code.
+In the _pages_ folder we create the file _signup.js_ and type in the following code.
 ```markdown
 import axios from 'axios';
 import FacebookLogin from 'react-facebook-login';
@@ -152,7 +152,7 @@ const Signup = (props) => {
                 <div className="auth-container bg-secondary" >
                     <div>
                         <FacebookLogin  
-                            appId="635054340432342"
+                            appId="xxxxxxxxxxxxx"
                             autoLoad={false}
                             textButton=" Register with Facebook" 
                             fields="name,email,picture"
@@ -188,7 +188,7 @@ Install the _react-facebook-login_ package for Facebook login button and the _ax
 ```markdown
     yarn add react-facebook-login axios
 ```
-To authenticate with facebook you need to go to [developers.facebook.com]() and create an application to have an app id. Copy your app Id and make it the value of the appId attribute of the FacebookLogin component above. Here is an online that [tutorial](https://webkul.com/blog/how-to-generate-facebook-app-id/) that shows how you can generate an appId for your app. When you are done setting up your app and updating the appId  property of the FacebookLogin button, reload the Signup page. You should have the result below.
+To authenticate with Facebook you need to go to [developers.facebook.com]() and create an application to have an app id. Copy your app Id and make it the value of the appId attribute of the FacebookLogin component above. Here is an online that [tutorial](https://webkul.com/blog/how-to-generate-facebook-app-id/) that shows how you can generate an appId for your app. When you are done setting up your app and updating the appId  property of the FacebookLogin button, reload the Signup page. You should have the result below.
 
 <img src="./images/signup.PNG" style="display: block; margin: auto;" />
 
@@ -232,7 +232,7 @@ Now let's connect the signup with the backend to save registered users to the da
 For the Facebook button to work properly we need to do one more thing.
 
 #### Step 4
-Facebook authentication must be done over https. To be able to that on localhost we will need to download [Ngrok](https://ngrok.com/download) to expose our server to the internet, this will equally create an https link we can use as domain on our facebook app settings.
+Facebook's authentication must be done over https. To be able to that on localhost we will need to download [Ngrok](https://ngrok.com/download) to expose our server to the internet, this will equally create an https link we can use as domain on our facebook app settings.
 When you must have downloaded ngrok, save the executable in your project folder or where you can easily reach it. I saved mine one directory above my project. Make sure the spo-tuto application is running, copy the port number and in your terminal run the ngrok program.
 ```markdown
     ../ngrok.exe http 3000
@@ -243,36 +243,35 @@ Ngrok will create a proxy to your local server. For the free account the generat
 
 
 #### Step 5
-Copy the https link, go to the dashboard of the Facebook app you created earlier, follow _Settings > Basic_ scroll down to _Website_ and update the site URL field. Note if you don't do this Facebook will not recognize the domain accessing its auth service and your login will fail and Login with facebook will not work.
+Copy the https link, go to the dashboard of the Facebook app you created earlier, follow _Settings > Basic_ scr oll down to _Website_ and update the site URL field. Note if you don't do this Facebook will not recognize the domain accessing its auth service and your login will fail and Login with Facebook will not work.
 
 <img src="./images/facebook.PNG" style="display: block; margin: auto;" />
 
 
 #### Step 6
-Now we go to the browser link to the secured link generared by ngrok. Try to Register with Facebook, the users object is returned with information concerning the user such as Name, email, id and profile picture, which is saved to the database and redirects us to the login page.
+Now we go to the browser, link to the secured link generared by ngrok. Try to Register with Facebook, the user object is returned with information concerning the user such as name, email, id and profile picture, which is saved to the database and redirects us to the login page.
 
-The login page has been implemented, open _pages/login.js_ you will notice there is no significant difference with the signup page. Separating both files was to allow for subsequent updates on other means of authentication and equally separating the login process from the signup process. After login with Facebook you should see the index page.
-
+The login page has been implemented, open pages/login.js you will notice there is no significant difference with the signup page. Separating both files was to allow for subsequent updates on other means of authentication and equally separating the login process from the signup process. After login with Facebook you should see the index page.
 <img src="./images/logged_in.PNG" style="display: block; margin: auto;" />
 
-### Intergrating Flutterwave
-We are now going to integrate Card payments with Flutterwave in our application. Some react concepts we will come across are react hooks, how to manipulate the Virtual DOM, suspense and lazy loading.
+### Integrating Flutterwave
+We are now going to integrate Card payments with Flutterwave in our application. Some react concepts we come across are react hooks, how to manipulate the Virtual DOM, suspense and lazy loading.
 #### Hooks
-Before integrating Flutterwave lets first talk about Hooks. Hooks were introduced in react version 16.8 , to give developers the ability to manipulate state and  use react features in functional components. In this tutorial we look at some of the common hooks useState, useEffect and useRef. 
+Before integrating Flutterwave lets first talk about Hooks. Hooks were introduced in react version 16.8 , to give developers the ability to manipulate state and  use react features in functional components. In this tutorial we look at some common hooks like useState, useEffect and useRef. 
 - **_useState_** hook is an api that allows the user to manage component state. That is if you have a state variable (a variable you want to track when it changes and update accordingly), useState will initialise the variable and return a function you can use to update the variable.
 ```markdown
     const [variableName, setVariableState] = useState('initialValue')
 ```
 The function setVariableState will be used to update the variable.
-- **_useEffect_**  hook accepts a function and runs this function during a render phase or when component state changes. You can pass a useEffect an array of state variables, useEffect will run the passed function each time any of these variables changes. Passing an empty array will make useEffect to run just once. You can have many useEffect calls in your component.
+- **_useEffect_**  hook accepts a function and runs this function during a render phase or when component state changes. You can pass useEffect an array of state variables, useEffect will run the passed function each time any of these variables changes. Passing an empty array will make useEffect to run just once. You can have multiple useEffect calls in a component.
 ```markdown
     useEffect( () => {
         // this function will be run everything as application is rerendered.
     })
 ```
-- **_useRef_**  hook is used to manipulate DOM, it is recommendated not to over use it. React uses a virtual DOM, useRef api will give the programmer access to the real DOM elements.
+- **_useRef_**  hook is used to manipulate DOM, it is recommended not to over use it. React uses a virtual DOM, useRef api will give the programmer access to the real DOM elements.
 #### Step 1: Building the Transaction and Payment widget
-The Transaction component will make use of hooks. The transaction page will contain the list of payments made to the platform. Also we will create a paymentWidget which will be called from the payment modal. Users of SPYO top up their accounts with cash which they can later use on the platform to either reward fans who support their campaign or support businesses to reward fans.
+The Transaction component will make use of hooks. The transaction page will contain the list of payments made to the platform. Also, we will create a paymentWidget which will be called from the payment modal. Users of SPYO top up their accounts with cash which they can later use on the platform to either reward fans who support their campaign or support businesses to reward fans.
 
 Create a file _pages/transactions.js_ and write in the following code.
 ```markdown
@@ -366,7 +365,7 @@ export async function getServerSideProps( { req, res }) {
 }
 export default Transactions;
 ```
-In the above code we used useState hook to create and intialize state variables _transactions_,_runningBalance_, _totalBalance_ and _errorMessage_. Next will be creating the PaymentModal and PaymentWidget components. Notice we already have an _openPaymentModal_ onClick handler to registered on the _Top Up_ button to make payments to the platform.
+In the above code we used useState hook to create and intialize state variables _transactions_, _runningBalance_, _totalBalance_ and _errorMessage_. Next will be creating the PaymentModal and PaymentWidget components. Notice we already have an _openPaymentModal_ onClick handler to registered on the _Top Up_ button to make payments to the platform.
 
 <img src="./images/transaction_bare.PNG" style="display: block; margin: auto;" />
 
@@ -427,12 +426,12 @@ We are almost done with the payment UI. Import the PaymentModal component into t
     import PaymentModal from '../components/partials/modals/paymentModal';
     ...
 ```
-Below the <table> closing tag, add the PaymentModal component.
+Below the <table /> closing tag, add the PaymentModal component.
 
 ```markdown
     <PaymentModal ref={paymentModalRef} {...{currency, paymentUrl, quota: topUpQuota}} />
 ```
-Note the ref attribute, in react you will create a reference only on a native HTML tag, since the modal we are targetting is instead found in the PaymentModal componenent we will forward the reference to the div element present on the PaymentModal component. You should notice on the PaymentModal component is wrapped in React.forwardRef call. This also allows us to control the child DOM from the parent component as can be seen in the body of the _openPaymentModal_ function in _Transactions_ Page Component.
+Note to manipulate HTML DOM, you assign the ref attribute to a native HTML tag, since the modal we are targetting is instead found in the PaymentModal component, we will forward the reference to the div element present on the PaymentModal component. You should notice on the PaymentModal component is wrapped in React.forwardRef call. This also allows us to control the child DOM from the parent component as can be seen in the body of the _openPaymentModal_ function in _Transactions_ Page Component. You also use refs when you want to store a value which does not force rendering of the page when updated.
 
 <img src="./images/paymentWidget.PNG" style="display: block; margin: auto;" />
 
@@ -443,7 +442,7 @@ To integrate flutterwave api you will need to create and account on [Flutterwave
 1. Go to [Flutterwave](https://www.flutterwave.com/signup) and fill the signup form.
 2. Check your email for verification link, you may have to check your spam for the email.
 3. Follow the verification email, you will need to specify how you want to use Flutterwave to accept payment.
-4. Select how you will want to accept payment from flutterwave. Select the option of your choice, for my case I chosed "To Accept Payment as an Individual".
+4. Select how you will want to accept payment from Flutterwave. Select the option of your choice, for my case I chose "To Accept Payment as an Individual".
 <img src="./images/flut1.PNG" style="display: block; margin: auto;" />
 
 5. You will be asked to provide some documents to verify your identity.
@@ -451,16 +450,16 @@ To integrate flutterwave api you will need to create and account on [Flutterwave
 
 #### Step 3: Integrate Flutterwave
 For a transaction to take place with Flutterwave three steps must be completed.
-1. Make a payment request
-2. Initiate payment
-3. Complete payment
-4. Verify transaction
+1. Make a payment request.
+2. Initiate payment.
+3. Complete payment.
+4. Verify transaction.
 We need to first download the ```flutterwave-node-v3``` package. We can now move to the next stage.
 
 ```markdown
     yarn add flutterwave-node-v3
 ```
-We are not yet there, lets setup keys that will enable us connect to the flutterwave platform and make payments.
+We are not yet there, lets setup keys that will enable us connect to the Flutterwave platform and make payments.
 In your [Flutterwave dashboard](https://dashboard.flutterwave.com/dashboard/settings/apis) _settings > api_ your will see all keys required to connect and interact with the Flutterwave payment platform. Open the _app.properties_ and add the following properties, replace placeholders with corresponding key values.
 
 ```markdown
@@ -472,7 +471,7 @@ In your [Flutterwave dashboard](https://dashboard.flutterwave.com/dashboard/sett
 <img src="./images/keys.PNG" style="display: block; margin: auto;" />
 
 **Make a Card payment request**
-Move to the ```PaymentCardWidget``` found in _components\partials\widgets\PaymentCardWidget.js_, this file was shared earlier. Flutterwave requires different information for different card payments. The function```createPaymentRequest``` sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. ```pages\api\transaction\cardPayment.js``` backend controller processes payload from the createPaymentRequest client request.
+Move to the ```PaymentCardWidget``` found in _components\partials\widgets\PaymentCardWidget.js_, this file was shared earlier. Flutterwave requires different information for different card payments. The function ```createPaymentRequest``` sends a payload to the server which calls the Charge api endpoint of Flutterwave, the response body returned by Flutterwave contains a meta property which defines the authentication procedure to use to charge or initiate payment on the card. Depending on the card additional information might be needed to complete payment. ```pages\api\transaction\cardPayment.js``` backend controller processes payload from the createPaymentRequest client request.
 
 Flutterwave provides [test cards](https://developer.flutterwave.com/docs/test-cards) to test your code. Make sure on your Flutterwave dashboard you are switched to test mode.
 
@@ -509,7 +508,7 @@ Payment request payload
 }
 ```
 **Initiate payment request**
-Once an initiate payment request is made the flutterwave returns a response body which specifies what authorization type is needed to initiate a payment.
+Once an initiate payment request is made, Flutterwave  returns a response body which specifies what authorization type is needed to initiate a payment.
 ```markdown
 {
   "status": "success",
@@ -596,7 +595,7 @@ The following code section in _components\partials\widgets\PaymentCardWidget.js_
 ```
 <img src="./images/w1.PNG" style="display: block; margin: auto;" />
 
-Payload sent to Flutterwave to initiate payment process
+Payload sent to Flutterwave to initiate payment process.
 ```markdown
 {
   "name": "Tane",
@@ -620,7 +619,7 @@ Payload sent to Flutterwave to initiate payment process
 }
 ```
 
-Response on payment initiation
+Response on payment initiation.
 ```markdown
 {
   "status": "success",
@@ -672,11 +671,11 @@ Response on payment initiation
 }
 ```
 **Complete payment**
-After filling additional details and initating payment, an OTP code is sent to the users email or phonenumber, in our case at the backend I used the current session users email. You can as well add an email or phonenumber input to the PaymentWidget. The different authorizations mode need to be handled differently.
+After filling additional details and initiating payment, an OTP code is sent to the users email or phonenumber, in our case at the backend I used the current session users email. You can as well add an email or phonenumber input to the PaymentWidget. The different authorization modes need to be handled differently.
 1. With pin authorization, you need to create a page in your app that will accept the OTP and confirm payment.
 <img src="./images/w2.PNG" style="display: block; margin: auto;" />
 
-2. with avs_noauth and no authorization , you will be redirected to a flutterwave link to enter the otp code and later redirected to the redirection link entered in the request body during the payment initialization step.
+2. With avs_noauth and no authorization, you will be redirected to a Flutterwave link to enter the otp code and later redirected to the redirection link entered in the request body during the payment initialization step.
 <img src="./images/w3.PNG" style="display: block; margin: auto;" />
 
 To complete payment we create a payment page ```pages\payment.js```, this has already been created for you. This page does two things.
